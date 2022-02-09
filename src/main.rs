@@ -18,8 +18,6 @@ async fn main() -> std::io::Result<()> {
         App::new()
             // enable logger
             .wrap(middleware::Logger::default())
-            .service(web::resource("/index.html").to(|| async { "Hello world!yyy" }))
-            .service(web::resource("/wtf").to(|| async { "WTF mate??" }))
             .service(web::resource("/").to(index))
             .route("/hey", web::get().to(manual_hello))
     })
