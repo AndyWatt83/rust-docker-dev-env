@@ -1,15 +1,10 @@
+use actix_web::{middleware, web, App, HttpRequest, HttpServer};
 
-
-use actix_web::{middleware, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
-
-async fn index(req: HttpRequest) -> &'static str {
+async fn say_hello(req: HttpRequest) -> &'static str {
     println!("REQ: {:?}", req);
     "Hello world!"
 }
 
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -20,8 +15,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             // enable logger
             .wrap(middleware::Logger::default())
-            .service(web::resource("/").to(index))
-            .route("/hey", web::get().to(manual_hello))
+            .service(web::resource("/").to(say_hello))
     })
     .bind("127.0.0.1:8080")?
     .run()
@@ -36,8 +30,8 @@ mod tests {
     use actix_web::{http, test, web, App, Error};
 
     #[actix_web::test]
-    async fn test_index() -> Result<(), Error> {
-        let app = App::new().route("/", web::get().to(index));
+    async fn test_say_hello() -> Result<(), Error> {
+        let app = App::new().route("/", web::get().to(say_hello));
         let app = test::init_service(app).await;
 
         let req = test::TestRequest::get().uri("/").to_request();
